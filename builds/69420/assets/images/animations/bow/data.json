@@ -1,0 +1,10 @@
+[
+    {
+        "type": "idle",
+        "length": 20
+    },
+    {
+        "type": "attack",
+        "length": 15
+    }
+]

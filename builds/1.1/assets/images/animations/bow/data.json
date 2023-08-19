@@ -1,0 +1,14 @@
+[
+    {
+        "name": "idle",
+        "length": 1
+    },
+    {
+        "name": "attack",
+        "length": 60
+    },
+    {
+        "name": "load",
+        "length": 60
+    }
+]

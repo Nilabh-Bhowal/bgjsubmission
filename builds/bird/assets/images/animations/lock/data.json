@@ -1,0 +1,10 @@
+[
+    {
+        "name": "idle",
+        "length": 1
+    },
+    {
+        "name": "open",
+        "length": 15
+    }
+]
