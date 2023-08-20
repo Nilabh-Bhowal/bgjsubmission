@@ -8,6 +8,13 @@
             "justMyCode": true
         },
         {
+            "name": "Editor",
+            "type": "python",
+            "request": "launch",
+            "program": "./editor.py",
+            "justMyCode": true
+        },
+        {
             "name": "Test",
             "type": "python",
             "request": "launch",

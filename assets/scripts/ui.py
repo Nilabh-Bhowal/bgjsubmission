@@ -2,7 +2,7 @@ import pygame
 
 
 def title(text, x, y, screen, color=(229, 217, 156)):
-    font = pygame.font.Font("assets/fonts/PressStart2P.ttf", 40)
+    font = pygame.font.Font("assets/fonts/font.ttf", 40)
     text = font.render(text, True, color)
     text_rect = text.get_rect()
     screen.blit(text, (x - text_rect.width // 2, y - text_rect.height // 2))

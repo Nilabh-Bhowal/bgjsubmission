@@ -1,0 +1,181 @@
+import time
+import pygame
+import json
+
+pygame.init()
+pygame.mixer.init()
+
+screen = pygame.display.set_mode((1280, 720))
+
+def get_tile_img(tile):
+    return pygame.transform.scale_by(pygame.image.load(f"assets/images/tiles/{tile}.png"), 2)
+
+def save(num, level):
+    with open(f'assets/levels/{num}.json', 'w') as f:
+        json.dump(level, f)
+
+def load(num):
+    with open(f'assets/levels/{num}.json', 'r') as f:
+        data = json.load(f)
+    return data
+
+scroll = [0, 0]
+cam_movement = [0, 0]
+
+level_num = 0
+level = []
+
+pressed = False
+
+clock = pygame.time.Clock()
+
+current_item = 0
+
+pt = time.time()
+dt = 1
+
+running = True
+while running:
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RIGHT:
+                cam_movement[0] = 1
+            if event.key == pygame.K_LEFT:
+                cam_movement[0] = -1
+            if event.key == pygame.K_DOWN:
+                cam_movement[1] = 1
+            if event.key == pygame.K_UP:
+                cam_movement[1] = -1
+
+            if event.key == pygame.K_s:
+                save(level_num, level)
+            if event.key == pygame.K_l:
+                level = load(level_num)
+            if event.key == pygame.K_c:
+                level = []
+                scroll = [0, 0]
+            if event.key == pygame.K_r:
+                scroll = [-640, -360]
+
+            if event.key == pygame.K_0:
+                level_num = 0
+                level = []
+            elif event.key == pygame.K_1:
+                level_num = 1
+                level = []
+            elif event.key == pygame.K_2:
+                level_num = 2
+                level = []
+            elif event.key == pygame.K_3:
+                level_num = 3
+                level = []
+            elif event.key == pygame.K_4:
+                level_num = 4
+                level = []
+            elif event.key == pygame.K_5:
+                level_num = 5
+                level = []
+            elif event.key == pygame.K_6:
+                level_num = 6
+                level = []
+            elif event.key == pygame.K_7:
+                level_num = 7
+                level = []
+            elif event.key == pygame.K_8:
+                level_num = 8
+                level = []
+            elif event.key == pygame.K_9:
+                level_num = 9
+                level = []
+
+        if event.type == pygame.KEYUP:
+            if event.key in [pygame.K_RIGHT, pygame.K_LEFT]:
+                cam_movement[0] = 0
+            if event.key in [pygame.K_UP, pygame.K_DOWN]:
+                cam_movement[1] = 0
+
+        if event.type == pygame.MOUSEWHEEL:
+            if event.y > 0:
+                if current_item == 5:
+                    current_item = 0
+                else:
+                    current_item += 1
+            else:
+                if current_item == 0:
+                    current_item = 5
+                else:
+                    current_item -= 1
+
+    if pygame.mouse.get_pos()[0] <= 980:
+        if pygame.mouse.get_pressed()[0]:
+            s = None
+            can_place = False
+            for tile in level:
+                if not pygame.Rect(tile[1], tile[2], 64, 64).colliderect(pygame.Rect(round((pygame.mouse.get_pos()[0] + scroll[0]) / 64) * 64 - scroll[0] - width // 2, round((pygame.mouse.get_pos()[1] + scroll[1]) / 64) * 64 - scroll[1] - height // 2, 64, 64)):
+                    can_place = True
+            if len(level) == 0:
+                can_place = True
+            if can_place:
+                level.append([str(current_item), round((pygame.mouse.get_pos()[0] + scroll[0] - 32) / 64) * 64, round((pygame.mouse.get_pos()[1] + scroll[1] - 32) / 64) * 64])
+        else:
+            s = pygame.Surface((64, 64))
+            s.blit(get_tile_img(current_item), (0, 0))
+            s.set_alpha(128)
+
+
+    if not pygame.mouse.get_pressed()[0]:
+        pressed = False
+
+    if pygame.mouse.get_pos()[0] <= 980 and pygame.mouse.get_pressed()[2]:
+        for tile in level:
+            if pygame.Rect(tile[1], tile[2], 64, 64).collidepoint((pygame.mouse.get_pos()[0] + scroll[0], pygame.mouse.get_pos()[1] + scroll[1])):
+                level.remove(tile)
+
+    for tile in level:
+        while level.count(tile) > 1:
+            level.remove(tile)
+
+    for tile in level:
+        for t in level:
+            if tile[1] == t[1] and tile[2] == t[2] and tile != t:
+                level.remove(t)
+
+
+    scroll[0] += cam_movement[0] * 20 * dt
+    scroll[1] += cam_movement[1] * 20 * dt
+
+    screen.fill((117, 201, 151))
+
+    for tile in level:
+        screen.blit(get_tile_img(tile[0]), ((tile[1] - scroll[0], tile[2] - scroll[1])))
+
+    if isinstance(s, pygame.surface.Surface):
+        width = s.get_rect().width
+        height = s.get_rect().height
+        grid_x = round((pygame.mouse.get_pos()[0] + scroll[0]) / 64) * 64
+        grid_y = round((pygame.mouse.get_pos()[1] + scroll[1]) / 64) * 64
+        surface_x = grid_x - scroll[0] - width // 2
+        surface_y = grid_y - scroll[1] - height // 2
+        screen.blit(s, (surface_x, surface_y))
+    pygame.draw.rect(screen, (0, 0, 0),
+                     (-scroll[0], -scroll[1], 32, 32))
+    for i in range(34):
+        pygame.draw.line(screen, (0, 0, 0), (i * 64 -
+                         scroll[0] % 64, 0), (i * 64 - scroll[0] % 64, 720))
+    for i in range(26):
+        pygame.draw.line(screen, (0, 0, 0), (0, i * 64 -
+                         scroll[1] % 64), (980, i * 64 - scroll[1] % 64))
+    pygame.draw.rect(screen, (0, 0, 0), (980, 0, 300, 720))
+
+    pygame.display.update()
+    clock.tick(60)
+    now = time.time()
+    dt = (now - pt) * 60
+    dt = min(dt, 4)
+    pt = now
+
+pygame.quit()

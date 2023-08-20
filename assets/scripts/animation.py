@@ -19,7 +19,7 @@ class Animation:
     def update(self):
         self.frame += 1
         if self.frame > len(self.data[self.current_animation]) - 1:
-            self.frame = len(self.data[self.current_animation]) - 1
+            self.frame = 0
             return True
         return False
 
