@@ -1,5 +1,6 @@
 import time
 import pygame
+import os
 import json
 
 pygame.init()
@@ -22,6 +23,11 @@ def load(num):
 scroll = [0, 0]
 cam_movement = [0, 0]
 
+tile_img = [
+    pygame.transform.scale2x(pygame.image.load(f"assets/images/tiles/{tile}"))
+    for tile in os.listdir("assets/images/tiles")
+]
+
 level_num = 0
 level = []
 
@@ -33,6 +39,8 @@ current_item = 0
 
 pt = time.time()
 dt = 1
+
+s = None
 
 running = True
 while running:
@@ -123,7 +131,7 @@ while running:
                 level.append([str(current_item), round((pygame.mouse.get_pos()[0] + scroll[0] - 32) / 64) * 64, round((pygame.mouse.get_pos()[1] + scroll[1] - 32) / 64) * 64])
         else:
             s = pygame.Surface((64, 64))
-            s.blit(get_tile_img(current_item), (0, 0))
+            s.blit(tile_img[current_item], (0, 0))
             s.set_alpha(128)
 
 
@@ -151,7 +159,8 @@ while running:
     screen.fill((117, 201, 151))
 
     for tile in level:
-        screen.blit(get_tile_img(tile[0]), ((tile[1] - scroll[0], tile[2] - scroll[1])))
+        if -32 <= tile[1] - scroll[0] <= 1312 and -32 <= tile[2]- scroll[1] <= 752:
+            screen.blit(tile_img[int(tile[0])], ((tile[1] - scroll[0], tile[2] - scroll[1])))
 
     if isinstance(s, pygame.surface.Surface):
         width = s.get_rect().width
@@ -175,7 +184,6 @@ while running:
     clock.tick(60)
     now = time.time()
     dt = (now - pt) * 60
-    dt = min(dt, 4)
     pt = now
 
 pygame.quit()

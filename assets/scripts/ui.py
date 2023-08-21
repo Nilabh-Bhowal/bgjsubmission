@@ -1,7 +1,7 @@
 import pygame
 
 
-def title(text, x, y, screen, color=(229, 217, 156)):
+def title(text, x, y, screen, color=(252, 255, 192)):
     font = pygame.font.Font("assets/fonts/font.ttf", 40)
     text = font.render(text, True, color)
     text_rect = text.get_rect()

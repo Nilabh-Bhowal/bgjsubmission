@@ -3,7 +3,7 @@ import os
 import subprocess
 
 v = input("Enter the version: ")
-subprocess.call("pyinstaller game.py --onefile -w --clean -p ./assets/scripts")
+subprocess.call("pyinstaller ./game.py --onefile -w --clean -p ./assets/scripts")
 if os.path.isdir(f"./builds/{v}"):
     shutil.rmtree(f"./builds/{v}", ignore_errors=True)
 os.mkdir(f"./builds/{v}")

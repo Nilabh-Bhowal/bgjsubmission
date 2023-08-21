@@ -2,8 +2,8 @@ import pygame
 import assets.scripts.animation as animation
 
 class Player:
-    def __init__(self):
-        self.rect = pygame.Rect(0, 0, 128, 128)
+    def __init__(self, x=0, y=0):
+        self.rect = pygame.Rect(x, y, 128, 128)
         self.animation = animation.Animation("gopher")
         self.movement = [0, 0]
         self.speed = 10
