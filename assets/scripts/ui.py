@@ -1,8 +1,14 @@
 import pygame
 
 
-def title(text, x, y, screen, color=(252, 255, 192)):
+def heading(text, x, y, screen, color=(252, 255, 192)):
     font = pygame.font.Font("assets/fonts/font.ttf", 40)
+    text = font.render(text, True, color)
+    text_rect = text.get_rect()
+    screen.blit(text, (x - text_rect.width // 2, y - text_rect.height // 2))
+
+def title(text, x, y, screen, color=(252, 255, 192)):
+    font = pygame.font.Font("assets/fonts/font.ttf", 60)
     text = font.render(text, True, color)
     text_rect = text.get_rect()
     screen.blit(text, (x - text_rect.width // 2, y - text_rect.height // 2))
@@ -95,7 +101,7 @@ class PromptBox:
         if self.prompted:
             return self.input
         pygame.draw.rect(screen, (100, 100, 100), self.rect)
-        title(self.message, self.rect.centerx, self.rect.top + 50, screen)
+        heading(self.message, self.rect.centerx, self.rect.top + 50, screen)
         pygame.draw.rect(screen, (255, 255, 255), self.text_box_rect)
         text_rect = self.draw_text(screen, self.input, self.text_box_rect.left + 5, self.text_box_rect.top + 5)
         if self.clicked_in:
@@ -167,7 +173,7 @@ class KeybindChanger:
             pygame.draw.rect(screen, (229, 217, 156), self.rect)
         else:
             pygame.draw.rect(screen, (214, 169, 126), self.rect)
-        title(f"{self.text}      {self.value_display}", self.rect.centerx, self.rect.centery, screen)
+        heading(f"{self.text}      {self.value_display}", self.rect.centerx, self.rect.centery, screen)
 
 
 class Popup:
@@ -184,4 +190,4 @@ class Popup:
         else:
             self.draw_y = max(self.draw_y - 5, 720)
         screen.blit(self.img, (self.rect.x, self.draw_y))
-        title(self.text, self.rect.centerx, self.draw_y + 32, screen, color=(30, 36, 74))
+        heading(self.text, self.rect.centerx, self.draw_y + 32, screen, color=(30, 36, 74))

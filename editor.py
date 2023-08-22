@@ -8,9 +8,6 @@ pygame.mixer.init()
 
 screen = pygame.display.set_mode((1280, 720))
 
-def get_tile_img(tile):
-    return pygame.transform.scale_by(pygame.image.load(f"assets/images/tiles/{tile}.png"), 2)
-
 def save(num, level):
     with open(f'assets/levels/{num}.json', 'w') as f:
         json.dump(level, f)
@@ -121,14 +118,7 @@ while running:
     if pygame.mouse.get_pos()[0] <= 980:
         if pygame.mouse.get_pressed()[0]:
             s = None
-            can_place = False
-            for tile in level:
-                if not pygame.Rect(tile[1], tile[2], 64, 64).colliderect(pygame.Rect(round((pygame.mouse.get_pos()[0] + scroll[0]) / 64) * 64 - scroll[0] - width // 2, round((pygame.mouse.get_pos()[1] + scroll[1]) / 64) * 64 - scroll[1] - height // 2, 64, 64)):
-                    can_place = True
-            if len(level) == 0:
-                can_place = True
-            if can_place:
-                level.append([str(current_item), round((pygame.mouse.get_pos()[0] + scroll[0] - 32) / 64) * 64, round((pygame.mouse.get_pos()[1] + scroll[1] - 32) / 64) * 64])
+            level.append([str(current_item), round((pygame.mouse.get_pos()[0] + scroll[0] - 32) / 64) * 64, round((pygame.mouse.get_pos()[1] + scroll[1] - 32) / 64) * 64])
         else:
             s = pygame.Surface((64, 64))
             s.blit(tile_img[current_item], (0, 0))
@@ -143,24 +133,20 @@ while running:
             if pygame.Rect(tile[1], tile[2], 64, 64).collidepoint((pygame.mouse.get_pos()[0] + scroll[0], pygame.mouse.get_pos()[1] + scroll[1])):
                 level.remove(tile)
 
-    for tile in level:
-        while level.count(tile) > 1:
-            level.remove(tile)
-
-    for tile in level:
-        for t in level:
-            if tile[1] == t[1] and tile[2] == t[2] and tile != t:
-                level.remove(t)
+    seen_tiles = set()
+    level = [tile for tile in level if not (tile[1], tile[2]) in seen_tiles and not seen_tiles.add((tile[1], tile[2]))]
 
 
-    scroll[0] += cam_movement[0] * 20 * dt
-    scroll[1] += cam_movement[1] * 20 * dt
+
+    scroll[0] += cam_movement[0] * 100
+    scroll[1] += cam_movement[1] * 100
 
     screen.fill((117, 201, 151))
 
     for tile in level:
-        if -32 <= tile[1] - scroll[0] <= 1312 and -32 <= tile[2]- scroll[1] <= 752:
+        if -32 <= tile[1] - scroll[0] <= 1312 and -32 <= tile[2] - scroll[1] <= 752:
             screen.blit(tile_img[int(tile[0])], ((tile[1] - scroll[0], tile[2] - scroll[1])))
+
 
     if isinstance(s, pygame.surface.Surface):
         width = s.get_rect().width
